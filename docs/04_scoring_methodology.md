@@ -2,7 +2,7 @@
 
 > **TL;DR.** SafePath gives every street segment a `safety_score` (0 to 1, 1 is best), turns that into a `route_cost` the routing algorithm minimizes, then runs Dijkstra 3 times: fastest, safest, balanced. Scores displayed in the UI are length-weighted so longer segments carry more weight than short ones.
 
-> **Status: implemented and deployed.** Scoring and routing are live at [safepaths.onrender.com](https://safepaths.onrender.com). The scoring formula was built in `safety-score-edge.ipynb` and the pre-computed weight arrays are loaded at runtime by `src/api/graph_store.py`.
+> **Status: implemented and deployed.** Scoring and routing are live at [safepath.up.railway.app](https://safepath.up.railway.app). The scoring formula was built in `safety-score-edge.ipynb` and the pre-computed weight arrays are loaded at runtime by `src/api/graph_store.py`.
 
 ## Where to find related docs
 

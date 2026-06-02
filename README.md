@@ -2,11 +2,11 @@
 
 > SafePath recommends walking routes in San Diego that feel safer and more comfortable, not just the fastest. Every street segment is scored using crime, walkability, lighting, and infrastructure data; then three routes (fastest, safest, balanced) are returned with turn-by-turn directions and a per-segment safety breakdown.
 
-[![Live app](https://img.shields.io/badge/live-safepaths.onrender.com-brightgreen)](https://safepaths.onrender.com) [![Course](https://img.shields.io/badge/DS3-Spring_2026-purple)](https://www.ds3atucsd.com)
+[![Live app](https://img.shields.io/badge/live-safepath.up.railway.app-brightgreen)](https://safepath.up.railway.app) [![Course](https://img.shields.io/badge/DS3-Spring_2026-purple)](https://www.ds3atucsd.com)
 
 ## Try it
 
-**[safepaths.onrender.com](https://safepaths.onrender.com)**
+**[safepath.up.railway.app](https://safepath.up.railway.app)**
 
 Type any two San Diego addresses. SafePath returns three routes on an interactive map, with distance, estimated walk time, safety score, crime density, and step-by-step directions for each.
 
@@ -94,6 +94,10 @@ uvicorn app.api_server:app --reload --port 8000
 ```
 
 Open [http://localhost:8000](http://localhost:8000) for the landing page. On first run the server downloads `fast_graph.zip` (~300 MB) and `crime_final_gdf.gpkg` (~98 MB) from GCS automatically. Subsequent starts load from disk.
+
+### Deploy to Railway
+
+The app is hosted on [Railway](https://railway.app). Connect the GitHub repo and Railway auto-detects Python, installs `requirements.txt`, and uses `railway.json` for the start command. No extra config needed.
 
 ### Run the Streamlit app
 

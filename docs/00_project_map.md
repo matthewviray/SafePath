@@ -65,7 +65,7 @@ If a Google Doc starts holding final project knowledge, port the short version i
 | 5 | Move scoring + routing logic into reusable Python modules | Done — `src/api/` |
 | 6 | Build map-based web app | Done — Streamlit + custom landing page |
 | 7 | Write unit tests, validate routes across neighborhoods | Done — 51 tests passing |
-| 8 | Deploy, prepare demo + final docs | Done — live at [safepaths.onrender.com](https://safepaths.onrender.com) |
+| 8 | Deploy, prepare demo + final docs | Done — live at [safepath.up.railway.app](https://safepath.up.railway.app) |
 
 See [`status.md`](status.md) for current open items.
 
