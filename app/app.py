@@ -12,9 +12,9 @@ from streamlit_folium import st_folium
 from streamlit_searchbox import st_searchbox
 
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from astral import LocationInfo
 from astral.sun import sun as _astral_sun
-from dateutil import tz
 
 from src.api import loader, pipeline
 from src.api.day_night import is_night_now
@@ -196,11 +196,11 @@ def _step_html(i: int, step: dict) -> str:
 with st.sidebar:
     tod = is_night_now()
 
-    # Time / day-night card (shown first)
-    _local_tz  = tz.tzlocal()
-    _now       = datetime.now(_local_tz)
+    # Time / day-night card — always San Diego local time, regardless of server tz
+    _sd_tz     = ZoneInfo("America/Los_Angeles")
+    _now       = datetime.now(_sd_tz)
     _loc       = LocationInfo(latitude=32.8801, longitude=-117.234)
-    _s         = _astral_sun(_loc.observer, date=_now, tzinfo=_local_tz)
+    _s         = _astral_sun(_loc.observer, date=_now.date(), tzinfo=_sd_tz)
     _time_str  = _now.strftime("%-I:%M %p")
     _dawn_str  = _s["dawn"].strftime("%-I:%M %p")
     _dusk_str  = _s["dusk"].strftime("%-I:%M %p")
@@ -371,11 +371,11 @@ with tab_map:
                         radius=18, blur=22, min_opacity=0.25,
                         max_val=_p95,
                         gradient={
-                            "0.0": "rgba(252,165,165,0)",
-                            "0.4": "#fca5a5",
-                            "0.65": "#ef4444",
-                            "0.85": "#dc2626",
-                            "1.0":  "#991b1b",
+                            "0.0":  "rgba(239,68,68,0)",
+                            "0.2":  "#ef4444",
+                            "0.45": "#dc2626",
+                            "0.7":  "#b91c1c",
+                            "1.0":  "#7f1d1d",
                         },
                     ).add_to(m)
                     folium.Element(
@@ -527,12 +527,14 @@ with tab_compare:
         import pandas as pd
         rows = []
         for mode, cfg in ROUTE_CFG.items():
-            r      = result["routes"][mode]
-            scores = r.get("edge_scores", [])
-            avg       = sum(e["safety_score"]   for e in scores) / len(scores) if scores else 0
-            avg_infra = sum(e["infrastructure"] for e in scores) / len(scores) if scores else 0
-            avg_walk  = sum(e["walk_score"]     for e in scores) / len(scores) if scores else 0
-            avg_crime = sum(e["crime_score"] for e in scores) / len(scores) if scores else 0
+            r          = result["routes"][mode]
+            scores     = r.get("edge_scores", [])
+            total_len  = sum(e["length_m"]    for e in scores) or 1
+            total_cost = sum(e["safety_cost"] for e in scores)
+            avg       = round(1 - (total_cost - total_len) / (4 * total_len), 3) if scores else 0
+            avg_crime = round(sum(e["crime_score"]    * e["length_m"] for e in scores) / total_len, 3) if scores else 0
+            avg_infra = round(sum(e["infrastructure"] * e["length_m"] for e in scores) / total_len, 3) if scores else 0
+            avg_walk  = round(sum(e["walk_score"]     * e["length_m"] for e in scores) / total_len, 3) if scores else 0
             rows.append({
                 "Route":                             f"{cfg['icon']} {cfg['label']}",
                 "Distance":                          f"{r['distance_mi']} mi",
